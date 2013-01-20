@@ -4,66 +4,77 @@
 		<script type="text/javascript" src="./vendor/d3/d3.min.js"></script>
 		<script type="text/javascript" src="./vendor/primefact.js"></script>
 		<script type="text/javascript" src="./vendor/jquery-1.7.2.min.js"></script>
+		<style>
+		</style>
 		<script>
 			$(document).ready(function(){
 				var factors = factor(
 					$('#number').html());
 				factors.unshift(1);
-				$("#prime").html(factors[0]);
-				n=$('#number').html();
-				var angular_sep = 3.14*2/n;
-				var radius_big = 200;
-				if (n!=1)
-				var radius = 2*3.14*radius_big/(3.5*n);
-				else radius = radius_big;
-				var dataset=[];
-				var angle=0;
-				if (n!=1)
+				function generate(factors,radius,centers)
 				{
-					for (i=0;i<n;i++)
+					centers2=[];
+					n=factors.pop();
+					console.log(n);
+					if (n-1)
 					{
-						var dataelement=[];
-						dataelement[0] = Math.cos(angle)*radius_big;
-						dataelement[1] = Math.sin(angle)*radius_big;
-						angle = angle + angular_sep;
-						dataset.push(dataelement);
-						console.log(dataset[i]);
+						for(i=0;i<centers.length;i++)
+						{
+							for(j=0;j<n;j++)
+							{
+							angular_sep = 6.28 / n;
+							console.log(angular_sep);
+							angle = j*angular_sep;
+							x_change = radius * Math.cos(angle);
+							y_change = radius * Math.sin(angle);
+							coordinate = [
+							x_change + centers[i][0],
+							y_change + centers[i][1]
+							]
+							centers2.push(coordinate);
+						}
+
+
+						}
+						console.log(centers2)
+						generate(factors,(n)*radius/(n+3),centers2)
 					}
-				}
-				else dataset[0] = [0,0];
-				var w = 900;
-				var h = 900;
-				var centerx = w/2;
-				var centery = h/2;
-				for (i=0;i<dataset.length;i++)
-		        {
-		        	dataset[i][0] = dataset[i][0] + centerx;
-		        	dataset[i][1] = dataset[i][1] + centerx;
-		        	console.log(dataset[i]);
-		        }
-				var svg = d3.select("body")
-            		.append("svg")
-		            .attr("width", w)
-		            .attr("height", h);
-		        svg.selectAll("circle")
-		        	.data(dataset)
-		        	.enter()
-		        	.append("circle")
-		        	.attr("cx",function(d){
-		        		return d[0];
-		        	})
-		        	.attr("cy",function(d){
-		        		return d[1];
-		        	})
-		        	.attr("r",radius);
+					else
+					{
+						for(i=0;i<centers.length;i++)
+						{
+							centers[i][0]+=500;
+							centers[i][1]+=500;
+						}	
+						var svg = d3.select('#container')
+									.append("svg")
+									.attr("width",1000)
+									.attr("height",1000)
+						  svg.selectAll("circle")
+					        	.data(centers)
+					        	.enter()
+					        	.append("circle")
+					        	.attr("cx",function(d){
+					        		return d[0];
+					        	})
+					        	.attr("cy",function(d){
+					        		return d[1];
+					        	})
+					        	.attr("r", radius);
+					}
+				};
+				generate(factors,200,[[0,0]]);
+				
+		        
+
 
 			});
 
 		</script>
 	</head>	
 	<body>
-		<p id="number">5</p>
-		<p id="prime"></p>
+		<p id="number">3</p>
+		<div id="container"></div>
 	</body>
 
 </html>
